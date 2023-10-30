@@ -11,9 +11,6 @@ be processed, and indexes created. The user will then type a query
 when this is finished. The top 10 pertinent papers should be
 returned as the output.
 
-
-Project By:
-- **CHANDRAHAS PURUSHOTHAM GUPTA TUMMEPALLI ANKA**
 --------------------------------------------------------------------------------------------------
 **How to run the code**
 --------------------------------------------------------------------------------------------------
