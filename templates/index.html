@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>search movie</title>
+  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/main.css') }}">
+  <style>
+    body {
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      background-size: 100% 100%;
+    }
+  </style>
+  <script>
+    let arr = [];
+    let Precision = [];
+    let Recall = [];
+    let avg=0;
+    function rel(e) {
+      arr[arr.length] = e;
+      let p, countrel = 0,
+        countnrel = 0,
+        r;
+      for (i = 0; i < arr.length; i++) {
+        if (arr[i] == "relevant") {
+          countrel += 1;
+        } else {
+          countnrel += 1;
+        }
+      }
+      p = (countrel / arr.length)
+      Precision.push(p)
+      // alert("precision @ " + arr.length + "is " + p)
+      if (arr.length == 10) {
+        for (i = 0; i < arr.length; i++) {
+          let countrelr = 0,
+            countnrelr = 0;
+          for (j = 0; j <= i; j++) {
+            if (arr[j] == "relevant") {
+              countrelr += 1;
+            } else {
+              countnrelr += 1;
+            }
+          }
+          r = countrelr / countrel;
+          Recall.push(r);
+          // alert("recall at " + (i + 1) + " is " + r);
+        }
+      }
+    }
+    let count=0;
+    function getscore(){
+      if(Precision.length==10 && Recall.length==10){
+
+        for(i=0;i<10;i++){
+          if(arr[i]=='relevant'){
+            count+=1;
+            avg+=Precision[i]
+          }
+        }
+        let avg_p=(1/count)*avg;
+
+        for(i=0;i<10;i++){
+          document.getElementById("score").innerHTML += "@" + (i+1) + " precision - " + Precision[i] + ";" + " Recall - " + Recall[i] + "<br>";
+        }
+        document.getElementById("score").innerHTML += "Average Precision - " + avg_p;
+    }}
+  </script>
+</head>
+
+<body>
+  <div>
+    <center>
+      <form action="/search" method="POST">
+        <div class="Card">
+          <div class="CardInner" style="width: 90%">
+            <label style="color:black; font-size: 30px; font-family: 'Fuzzy Bubbles', cursive;">Let's find a movie for
+              you</label>
+            <div class="container">
+              <!--              <div class="Icon">-->
+              <!--                <svg xmlns="https://iconscout.com/icon/search-1364" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>-->
+              <!--              </div>-->
+              <div class="form-group InputContainer">
+                <input style="width: 100% ; height: 80%" placeholder="Type some keywords..." style="color:black"
+                  name="query" />
+              </div>
+              <button type="submit" style="margin-left: 5px;">Search</button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </center>
+    <center>
+      <div>
+
+        {% for y, t , o , d , uk, g ,w ,Plot   in docs %}
+        <div class="movie-card" style=" margin-top:15px ;color:black ">
+          <div style="display:flex; flex-direction:row">
+            <h3 style="padding:10px">Title : {{t}} </h3>
+            <!--                   <p> <strong >Origin/Ethnicity : </strong>  {{o}}</p>-->
+            <p style="padding:15px"><strong>Year of Release : </strong> {{y}}
+              <p style="padding:15px"> <strong>Director : </strong> {{d}}</p>
+
+              <p style="padding:15px"><strong>Genre : </strong> {{g }}</p>
+              <!--               <p><strong >Wiki Page :</strong>  <a href={{w}}  style="color:blue">See Entire plot here!</a>  </p>-->
+              <!--               <p><strong >Plot  :  </strong> {{Plot }}</p>-->
+
+          </div>
+          <p><strong>Cast : </strong> {{uk}}</p>
+          <div>
+            <input type="radio" name="relevance" id="t" value="relevant" onchange="rel(value)">
+            &nbsp;
+            <span id="rel">relevant</span>
+            &nbsp;&nbsp;&nbsp;
+            <input type="radio" name="relevance" id="" value="non-relevant" onchange="rel(value)">
+            &nbsp;
+            <span id="non_relevant">non relevant</span>
+          </div>
+
+        </div>
+        {% endfor %}
+      </div>
+  </div>
+  </center>
+  <div id="score">
+
+  </div>
+  <!-- <div>
+    <button class="submit" onload="getscore()">evaluation metrics</button>
+    <p id="result"></p>
+  </div> -->
+  </div>
+</body>
+
+</html>
